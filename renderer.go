@@ -1,9 +1,37 @@
 package main
 
 import (
+	"container/list"
 	"fmt"
 	"github.com/fatih/color"
 )
+
+// Render takes an ast list and renders it to the screen
+func Render(ast list.List) {
+	for e := ast.Front(); e != nil; e = e.Next() {
+		node, ok := e.Value.(Node)
+		if !ok {
+			panic(ok)
+		}
+		if node.Type == newline {
+			fmt.Println()
+		} else {
+			if node.Type == heading {
+				PrintHeading(node.Content, node.Heading)
+			} else if node.Type == blockquote {
+				fmt.Print("\t")
+			} else if node.Type == italic {
+				PrintItalic(node.Content)
+			} else if node.Type == strikethrough {
+				PrintStrikethrough(node.Content)
+			} else if node.Type == bold {
+				PrintBold(node.Content)
+			} else {
+				Print(node.Content)
+			}
+		}
+	}
+}
 
 // PrintHeading prints an arbitraty heading to the screen, the textContent is what is to be displayed and the level is
 // the level at which the heading is formatted to
@@ -19,8 +47,7 @@ func PrintHeading(textContent string, level int) {
 		fmt.Print("  ")
 	}
 	c := color.New(color.Underline)
-	c.Println(textContent)
-	fmt.Println()
+	c.Print(textContent)
 }
 
 // PrintSetext prints a setext which is indicated in markdown using
@@ -64,7 +91,19 @@ func PrintItalic(textContent string) {
 	c.Print(textContent)
 }
 
+// PrintBold takes a string and prints it italicised
+func PrintBold(textContent string) {
+	c := color.New(color.Bold)
+	c.Print(textContent)
+}
+
+// PrintStrikethrough takes a string and prints it italicised
+func PrintStrikethrough(textContent string) {
+	c := color.New(color.CrossedOut)
+	c.Print("~~" + textContent + "~~")
+}
+
 // Print simply prints a text content node to the screen
 func Print(textContent string) {
-	fmt.Println(textContent)
+	fmt.Print(textContent)
 }

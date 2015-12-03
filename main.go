@@ -23,6 +23,6 @@ func main() {
 		input, _ = reader.ReadString('\n')
 	}
 
-	Parse(input)
+	Render(Parse(input))
 
 }
